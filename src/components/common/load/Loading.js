@@ -3,7 +3,6 @@ import styled, {
 } from 'styled-components';
 import PropTypes from 'prop-types';
 
-
 const Spinner = keyframes`
 0%,
   100% {
@@ -32,18 +31,18 @@ const Spinner = keyframes`
   }
 `;
 
-
-
 const Loading = styled.div`
-  font-size: ${({fontsize}) => fontsize}px;
-  width: ${({size}) => size}em;
-  height: ${({size}) => size}em;
-  border-radius: 50%;
-  position: relative;
-  text-indent: -9999em;
-  animation: ${Spinner} ${({speedborder}) => speedborder}s infinite ease-out;
-  transform: translateZ(0);
-  z-index: 100;
+    font-size: ${({ fontsize }) => fontsize}px;
+    width: ${({ size }) => size}em;
+    height: ${({ size }) => size}em;
+    border-radius: 50%;
+    position: relative;
+    text-indent: -9999em;
+    animation: ${Spinner}
+        ${({ speedborder }) => speedborder}s
+        infinite ease-out;
+    transform: translateZ(0);
+    z-index: 100;
 `;
 
 Loading.propTypes = {
