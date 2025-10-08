@@ -1,6 +1,7 @@
 import React from 'react';
 import NavBar from './components/navbar/NavBar';
 import Main from './pages/Main';
+import Footer from './components/footer/Footer';
 import styled from 'styled-components';
 
 const AppStyle = styled.div`
@@ -8,15 +9,15 @@ const AppStyle = styled.div`
     flex-direction: column;
     gap: 2rem;
     text-align: center;
-
 `;
 
 function App() {
     return (
         <AppStyle className="App">
             <NavBar />
-            <h1>tubetide_app</h1>
+            <h1>tubeTide</h1>
             <Main />
+            <Footer name="Sandro Seivane" />
         </AppStyle>
     );
 }

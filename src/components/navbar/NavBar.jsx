@@ -4,11 +4,11 @@ import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-import logo from '../../images/logo.png'
+import logo from '../../images/logo.png';
 import styled from 'styled-components';
 import { AiOutlineHome } from 'react-icons/ai';
 import { GrLogin } from 'react-icons/gr';
-
+import { IoMdPerson } from 'react-icons/io';
 
 const ImgStyle = styled.img`
     width: 130px;
@@ -119,6 +119,23 @@ function OffcanvasExample() {
                                         }
                                     >
                                         <GrLogin
+                                            style={{
+                                                fontSize:
+                                                    '1.7rem'
+                                            }}
+                                        />
+                                    </Nav.Link>
+                                    <Nav.Link
+                                        href="#action2"
+                                        className={({
+                                            isActive
+                                        }) =>
+                                            isActive
+                                                ? 'nav-link active'
+                                                : 'nav-link'
+                                        }
+                                    >
+                                        <IoMdPerson
                                             style={{
                                                 fontSize:
                                                     '1.7rem'
