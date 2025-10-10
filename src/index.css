@@ -13,8 +13,10 @@
     );
     --white-color: #fff;
     --black-color: #222222;
-    --gray-color: #c5c5c5;
+    --gray-color: #7e7e7e;
+    --gray-color-secondary: #363535b4;
     --background-color: #333;
+    --bg-base: #000000;
     --border-radius: 6rem;
     --box-shadow: 0 0 4rem rgba(0, 0, 0, 0.1);
 }
@@ -50,7 +52,7 @@ body {
     font-weight: 500;
     font-style: normal;
     color: var(--white-color);
-    background: var(--black-color) !important;
+    background: var(--bg-base) !important;
     overflow-x: hidden !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -10,12 +11,23 @@ import { AiOutlineHome } from 'react-icons/ai';
 import { GrLogin } from 'react-icons/gr';
 import { IoMdPerson } from 'react-icons/io';
 
+
+
 const ImgStyle = styled.img`
     width: 130px;
     height: auto;
 `;
 
-function OffcanvasExample() {
+function OffcanvasExample({onsearch}) {
+
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const handleSubmit = (e) =>{
+        e.preventDefault();
+        if (onsearch && searchTerm.trim()) {
+            onsearch(searchTerm);
+        }
+    }
     return (
         <>
             {['xl'].map(expand => (
@@ -76,16 +88,20 @@ function OffcanvasExample() {
                             ></Offcanvas.Header>
 
                             <Offcanvas.Body>
-                                <Form className="form-style d-flex justify-content-end flex-grow-1">
+                                <Form className="form-style d-flex justify-content-end flex-grow-1"
+                                onSubmit={handleSubmit}>
                                     <Form.Control
                                         type="search"
                                         placeholder="Search for video..."
                                         className="form-search me-2"
                                         aria-label="Search"
+                                        value={searchTerm}
+                                        onChange={e => setSearchTerm(e.target.value)}
                                     />
                                     <Button
                                         className="search-btn-style"
                                         variant="outline-light"
+                                        type='submit'
                                     >
                                         Search
                                     </Button>

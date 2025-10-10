@@ -7,7 +7,6 @@ import styled from 'styled-components';
 const AppStyle = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 2rem;
     text-align: center;
 `;
 
