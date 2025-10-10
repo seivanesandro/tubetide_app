@@ -14,6 +14,7 @@ import ErrorCompoment from '../components/common/error/ErrorComponent';
 import { FcBinoculars, FcComments, FcLike, FcShare } from 'react-icons/fc';
 
 // TODO: add animation smooth
+// TODO: create components videlist ant watchlaterlist to render on main and add props search to main 
 
 const StyleMain = styled.div`
     background: var(--black-color);
