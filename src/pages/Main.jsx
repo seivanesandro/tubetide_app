@@ -1,26 +1,86 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+    useEffect,
+    useState
+} from 'react';
 // import PropTypes from 'prop-types'
 //import Youtube from '../fetchApi/Youtube';
 
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { devices } from '../utils/constantes';
-import {  getVideoDetails, getPopularVideos } from '../fetchApi/ServiceYoutube';
+import {
+    getVideoDetails,
+    getPopularVideos,
+    searchVideos
+} from '../fetchApi/ServiceYoutube';
 
 // Comomponents commons
 import Loading from '../components/common/load/Loading';
 import ErrorCompoment from '../components/common/error/ErrorComponent';
-//import MyButton from '../components/common/button/MyButton';
-//import MyInput from '../components/common/input/MyInput';
-import { FcBinoculars, FcComments, FcLike, FcShare } from 'react-icons/fc';
+import VideoDetails from '../components/video/VideoDetails';
+import VideoList from '../components/video/VideoList';
 
-// TODO: add animation smooth
-// TODO: create components videlist ant watchlaterlist to render on main and add props search to main 
+const Show = keyframes`
+    0%{
+        opacity:0;
+    }
+    50%{
+        opacity:0.5;
+    }
+
+    100%{
+        opacity:1;
+    }
+`;
+
+const ContainerLoading = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 15rem;
+
+    @media only screen and (${devices.mobileG}) {
+        margin: 5rem 1rem;
+    }
+
+    @media only screen and (${devices.tablet}) {
+        margin: 8rem 2rem;
+    }
+
+    @media only screen and (max-width: 600px) {
+        margin: 5rem 1rem;
+    }
+`;
+
+const ContainerError = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 15rem;
+
+    @media only screen and (${devices.mobileG}) {
+        margin: 5rem 1rem;
+    }
+
+    @media only screen and (${devices.tablet}) {
+        margin: 8rem 2rem;
+    }
+
+    @media only screen and (max-width: 600px) {
+        margin: 5rem 1rem;
+    }
+`;
+
 
 const StyleMain = styled.div`
-    background: var(--black-color);
+    background: var(--bg-color);
     min-height: 90vh !important;
     padding: 5rem 5rem 0 5rem;
     display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 2rem;
+    animation: ${Show} 1s ease-in;
 
     @media only screen and (${devices.portatilS}) {
         padding: 2rem !important;
@@ -60,106 +120,11 @@ const LeftCol = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 2rem 0.8rem 2rem 0.8rem;
-    gap: 1.5rem;
-/*     background: var(--gray-color-secondary);
-    height: 100%;  */
+    padding: 2rem 0.8rem 0.1rem 0.8rem;
 
     @media only screen and (${devices.tablet}) {
         flex: 2;
     }
-`;
-
-const ContainerVideo = styled.div`
-    background: var(--dark-color);
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    width: 100%;
-`;
-
-const IframeVideo = styled.iframe`
-    width: 100%;
-    max-width: 900px;
-    aspect-ratio: 16/9;
-    box-shadow: 0 0 0.4rem var(--bg-base);
-
-    @media only screen and (${devices.tablet}) {
-        height: 300px;
-    }
-
-    @media only screen and (${devices.iphone14}) {
-        height: 240px;
-    }
-
-    @media only screen and (${devices.mobileG}) {
-        height: 240px;
-    }
-`;
-
-const ContainerDescriptionVideo = styled.div`
-    color: var(--white-color);
-    margin-top: 1rem;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    background: var(--gray-color-secondary);
-    height: auto;
-    padding: 1.5rem;
-    box-shadow: 0 0 0.3rem var(--bg-base);
-
-    @media only screen and (${devices.iphone14}) {
-        padding: 1rem !important;
-    }
-`;
-
-const TitleVideo = styled.strong`
-    font-size: 1.2rem;
-    &.title-video {
-        font-weight: bold;
-    }
-    &.subtitle-video {
-        font-size: 0.9rem;
-        font-weight: normal;
-    }
-
-    @media only screen and (${devices.iphone14}) {
-        font-size: 1rem;
-        &.subtitle-video {
-            font-size: 0.8rem;
-        }
-    }
-    @media only screen and (${devices.mobileG}) {
-        font-size: 1rem;
-        &.subtitle-video {
-            font-size: 0.8rem;
-        }
-    }
-`;
-const ContianerIcons = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1rem;
-
-    @media only screen and (${devices.iphone14}) {
-        gap: 0.6rem;
-    }
-    @media only screen and (${devices.mobileG}) {
-        gap: 0.6rem;
-    }
-    @media only screen and (${devices.mobileP}) {
-        gap: 0.5rem;
-    }
-`;
-
-const IconSpan = styled.span`
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.8rem;
 `;
 
 // Right col
@@ -186,94 +151,355 @@ const WatchLaterTitle = styled.h5`
     text-align: left;
 `;
 
-const WatchLaterListContainer = styled.div`
-    cursor: pointer;
-    margin-bottom: 1rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.8rem;
-    background: var(--gray-color);
-    color: var(--dark-color) !important;
-    padding: 0.5rem;
-    width: 96%;
-
-    &:hover {
-        background: var(--primary-color);
-        box-shadow: 0 0 0.5rem var(--white-color);
-        font-size: 1.1rem;
-    }
-`;
-
-const WatchLaterThumb = styled.img``;
-const ListVideoContainer = styled.div``;
-
-const VideoTitle = styled.div`
-    color: var(--white-color);
-    font-weight: bold;
-    font-size: 0.9rem;
-    text-align: left;
-`;
-
-const VideoSubtitle = styled.div`
-    color: var(--white-color);
-    font-size: 0.8rem;
-    text-align: left;
-`;
-const VideoDuration = styled.div`
-color: var(--white-color);
-font-size: 0.7rem;
-text-align: left;
-`;
-
-const Main = () => {
-
+const Main = ({ searchQuery }) => {
     // Estados para armazenar videos populares (watch later)
-    const [watchLaterVideos, setWatchLaterVideos] = useState([]);
+    const [
+        watchLaterVideos,
+        setWatchLaterVideos
+    ] = useState([]);
     // estado para armazenar o video principal atual
-    const [ currentVideo, setCurrentVideo ] = useState(null);
+    const [currentVideo, setCurrentVideo] =
+        useState(null);
 
     // estado para controlar o loading
-    const [ loading, setLoading ] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    // estado para contro lar erros 
-    const [ error, setError ] = useState(null);
+    // estado para controlar erros
+    const [error, setError] = useState(null);
 
-    // funçao para carregar videos populares e definir o video atual ao montar o component com useEffect()
-    useEffect(()=> {
-        const fetchInitialData = async () => {
-            try{
+    // Adicionar este estado para manter a última pesquisa
+    const [lastSearchTerm, setLastSearchTerm] =
+        useState('');
+
+    // IMPLEMENTAÇÃO NOVA: Função simplificada para garantir persistência após refresh
+    useEffect(() => {
+        const loadStateAfterRefresh = async () => {
+            try {
                 setLoading(true);
+                console.log("Iniciando carregamento de estado após refresh");
                 
-                // obter videos populares
-                const videos = await getPopularVideos(15);
-                setWatchLaterVideos(videos);
-
-                //defenir o primeiro video como o video atual
-                if(videos.length > 0){
-                    const videoDetails = await getVideoDetails(videos[0].id);
-                    setCurrentVideo(videoDetails);
+                // 1. Tentar carregar o vídeo salvo
+                const savedVideoJSON = localStorage.getItem('currentVideoDetails');
+                let videoLoaded = false;
+                
+                if (savedVideoJSON) {
+                    try {
+                        const savedVideo = JSON.parse(savedVideoJSON);
+                        setCurrentVideo(savedVideo);
+                        videoLoaded = true;
+                        console.log("Vídeo carregado do localStorage:", savedVideo.id);
+                    } catch (e) {
+                        console.error("Erro ao carregar vídeo:", e);
+                    }
+                }
+                
+                // 2. Tentar carregar a lista de vídeos salva
+                const savedVideosJSON = localStorage.getItem('watchLaterVideos');
+                let videosLoaded = false;
+                
+                if (savedVideosJSON) {
+                    try {
+                        const savedVideos = JSON.parse(savedVideosJSON);
+                        if (savedVideos && savedVideos.length > 0) {
+                            setWatchLaterVideos(savedVideos);
+                            videosLoaded = true;
+                            console.log("Lista de vídeos carregada com sucesso:", savedVideos.length);
+                        }
+                    } catch (e) {
+                        console.error("Erro ao carregar lista de vídeos:", e);
+                    }
+                }
+                
+                // 3. Tentar carregar o termo de pesquisa
+                const savedSearch = localStorage.getItem('lastSearchQuery');
+                if (savedSearch) {
+                    setLastSearchTerm(savedSearch);
+                    console.log("Termo de pesquisa carregado:", savedSearch);
+                }
+                
+                // 4. Se não foi possível carregar do localStorage, carrega vídeos populares (somente primeira visita)
+                if (!videosLoaded) {
+                    console.log("Carregando vídeos populares (primeira visita)");
+                    const videos = await getPopularVideos(15);
+                    setWatchLaterVideos(videos);
+                    localStorage.setItem('watchLaterVideos', JSON.stringify(videos));
+                    
+                    // Se não carregou vídeo, usar o primeiro dos populares
+                    if (!videoLoaded && videos && videos.length > 0) {
+                        try {
+                            const firstVideoId = getVideoIdFromResult(videos[0]);
+                            if (firstVideoId) {
+                                const videoDetails = await getVideoDetails(firstVideoId);
+                                setCurrentVideo(videoDetails);
+                                localStorage.setItem('currentVideoDetails', JSON.stringify(videoDetails));
+                            }
+                        } catch (e) {
+                            console.error("Erro ao carregar primeiro vídeo:", e);
+                        }
+                    }
                 }
                 
                 setLoading(false);
-            } catch(error) {
-                console.log("Failed to fetch videos. Please try again later.");
-                setError(error.message);
+            } catch (error) {
+                console.error("Erro ao carregar estado:", error);
+                setError("Falha ao carregar dados. Por favor, tente novamente mais tarde.");
                 setLoading(false);
             }
         };
-            fetchInitialData();
-    },[]);
+        
+        loadStateAfterRefresh();
+        
+        // Este efeito só deve executar uma vez ao montar o componente
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // useEffect para lidar com pesquisas
+    useEffect(() => {
+        const handleSearch = async () => {
+            // CORREÇÃO CRÍTICA: Só executa se houver searchQuery OU se brandClicked for true
+            // Isso evita executar no refresh normal da página
+            const brandClicked = sessionStorage.getItem('brandClicked') === 'true';
+            
+            // Se não há searchQuery E não clicou no brand, NÃO FAZ NADA (mantém localStorage)
+            if (!searchQuery && !brandClicked) {
+                console.log("Sem ação necessária - mantendo estado atual");
+                return;
+            }
+            
+            if (
+                !searchQuery ||
+                (searchQuery.trim() === '' && brandClicked)
+            ) {
+                try {
+                    setLoading(true);
+                    // Limpar o sessionStorage após uso
+                    sessionStorage.removeItem(
+                        'brandClicked'
+                    );
+
+                    // Limpar currentVideoId e lastSearchQuery do localStorage
+                    localStorage.removeItem(
+                        'currentVideoId'
+                    );
+                    
+                    // NOVA ALTERAÇÃO: Limpar a pesquisa salva quando clica no brand
+                    localStorage.removeItem(
+                        'lastSearchQuery'
+                    );
+                    setLastSearchTerm('');
+
+                    // obter videos populares
+                    const videos =
+                        await getPopularVideos(
+                            15
+                        );
+                    setWatchLaterVideos(videos);
+                    
+                    //  Salvar os vídeos populares no localStorage para persistir após refresh
+                    localStorage.setItem('watchLaterVideos', JSON.stringify(videos));
+
+                    // IMPORTANTE: Sempre carregar o primeiro vídeo após clicar no brand
+                    if (videos.length > 0) {
+                        const videoDetails = await getVideoDetails(videos[0].id);
+                        setCurrentVideo(videoDetails);
+                        
+                        // Salvar o novo estado no localStorage
+                        localStorage.setItem('currentVideoDetails', JSON.stringify(videoDetails));
+                        localStorage.setItem('currentVideoId', videoDetails.id);
+                    }
+
+                    setLoading(false);
+                } catch (error) {
+                    console.log(
+                        'Failed to fetch videos. Please try again later.'
+                    );
+                    setError(error.message);
+                    setLoading(false);
+                }
+                return;
+            }
+
+            // NOVA ALTERAÇÃO: Salvar a pesquisa atual no localStorage
+            if (searchQuery && searchQuery.trim() !== '') {
+                localStorage.setItem('lastSearchQuery', searchQuery);
+                setLastSearchTerm(searchQuery);
+            } else {
+                // Se não tiver query nova, usar a salva (para manter persistência)
+                const savedSearch = localStorage.getItem('lastSearchQuery');
+                if (savedSearch) {
+                    setLastSearchTerm(savedSearch);
+                }
+            }
+            
+            // Código para pesquisa
+            try {
+                setLoading(true);
+                console.log(
+                    'Searching for:',
+                    searchQuery
+                );
+
+                // Buscar vídeos relacionados à pesquisa
+                const searchResults =
+                    await searchVideos(
+                        searchQuery
+                    );
+                console.log(
+                    'Search results:',
+                    searchResults
+                );
+
+                if (
+                    searchResults &&
+                    searchResults.length > 0
+                ) {
+                    // Atualizar a lista de vídeos com os resultados da pesquisa
+                    setWatchLaterVideos(
+                        searchResults
+                    );
+                    
+                    // SOLUÇÃO: Salvar os resultados de pesquisa no localStorage para persistir após refresh
+                    localStorage.setItem('watchLaterVideos', JSON.stringify(searchResults));
+
+                    // Corrigindo a extração do ID do vídeo
+                    const firstVideoId =
+                        getVideoIdFromResult(
+                            searchResults[0]
+                        );
+
+                    if (firstVideoId) {
+                        try {
+                            // Definir o primeiro resultado como o vídeo atual
+                            const videoDetails =
+                                await getVideoDetails(
+                                    firstVideoId
+                                );
+                            setCurrentVideo(
+                                videoDetails
+                            );
+
+                            // CRÍTICO: Salvar TODOS os dados no localStorage para persistir após refresh
+                            localStorage.setItem(
+                                'currentVideoId',
+                                videoDetails.id
+                            );
+                            localStorage.setItem(
+                                'currentVideoDetails',
+                                JSON.stringify(videoDetails)
+                            );
+                        } catch (detailsError) {
+                            console.error(
+                                'Error fetching video details:',
+                                detailsError
+                            );
+                            // Fallback: usar as informações básicas do vídeo
+                            setCurrentVideo(
+                                searchResults[0]
+                            );
+                        }
+                    } else {
+                        setError(
+                            'Invalid video ID from search results'
+                        );
+                    }
+                } else {
+                    setError(
+                        'No videos found for this search query'
+                    );
+                }
+
+                setLoading(false);
+            } catch (error) {
+                console.error(
+                    'Search error:',
+                    error
+                );
+                setError(
+                    'Failed to search videos. Please try again.'
+                );
+                setLoading(false);
+            }
+        };
+
+        handleSearch();
+    }, [searchQuery]);
+
+    // Funçao para extrair o ID do video de diferentes formatos de resposta
+    const getVideoIdFromResult = videoResult => {
+        // Verificar se o ID está na estrutura aninhada (comum para resultados de pesquisa)
+        if (
+            videoResult.id &&
+            videoResult.id.videoId
+        ) {
+            console.log(
+                'Found videoId in id.videoId:',
+                videoResult.id.videoId
+            );
+            return videoResult.id.videoId;
+        }
+
+        // Verificar se o ID está diretamente disponível (comum para vídeos populares)
+        if (
+            videoResult.id &&
+            typeof videoResult.id === 'string'
+        ) {
+            console.log(
+                'Found direct id:',
+                videoResult.id
+            );
+            return videoResult.id;
+        }
+
+        // Para outros formatos de resposta que podem surgir
+        if (
+            videoResult.snippet &&
+            videoResult.snippet.resourceId &&
+            videoResult.snippet.resourceId.videoId
+        ) {
+            console.log(
+                'Found videoId in snippet.resourceId:',
+                videoResult.snippet.resourceId
+                    .videoId
+            );
+            return videoResult.snippet.resourceId
+                .videoId;
+        }
+
+        console.error(
+            'Could not extract video ID from:',
+            videoResult
+        );
+        return null;
+    };
 
     // funçao para definir um novo video como o video atual
-    const handleSelectVideo = async (videoId) => {
-        try{
+    const handleSelectVideo = async videoId => {
+        try {
             setLoading(true);
+
+            // Salvar o ID do vídeo selecionado no localStorage
+            localStorage.setItem('currentVideoId', videoId);
+
             const videoDetails = await getVideoDetails(videoId);
             setCurrentVideo(videoDetails);
+            
+            // IMPORTANTE: Salvar também o vídeo atual completo no localStorage
+            // para garantir que ele persista exatamente igual após o refresh
+            try {
+                localStorage.setItem('currentVideoDetails', JSON.stringify(videoDetails));
+                
+                // MUITO IMPORTANTE: Salvar também a lista de vídeos atual
+                // para garantir que ela persista exatamente igual após o refresh
+                localStorage.setItem('watchLaterVideos', JSON.stringify(watchLaterVideos));
+            } catch (err) {
+                console.error('Erro ao salvar estado:', err);
+            }
+            
             setLoading(false);
-        }catch(error){
-            console.log("Failed to fetch video details. Please try again later.");
+        } catch (error) {
+            console.log(
+                'Failed to fetch video details. Please try again later.'
+            );
             setError(error.message);
             setLoading(false);
         }
@@ -316,137 +542,94 @@ const Main = () => {
     };
 
     // Funçao para formatar a duraçao do video
-    const formatDuration = (duration) => {
+    const formatDuration = duration => {
         // A duraçao vem no formato ISO 8601, ex: PT1H2M10S
 
         if (!duration) return '0:00';
 
-        let match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+        let match = duration.match(
+            /PT(\d+H)?(\d+M)?(\d+S)?/
+        );
 
         if (!match) return '0:00';
 
-        let hours = (match[1] || '').replace('H', '');
-        let minutes = (match[2] || '').replace('M', '');
-        let seconds = (match[3] || '').replace('S', '');
+        let hours = (match[1] || '').replace(
+            'H',
+            ''
+        );
+        let minutes = (match[2] || '').replace(
+            'M',
+            ''
+        );
+        let seconds = (match[3] || '').replace(
+            'S',
+            ''
+        );
 
         // preencher com zerosa a esquerda
-        if (hours){
+        if (hours) {
             hours = hours.padStart(2, '0');
         }
-        minutes = minutes.padStart(2, '0') || '00';
-        seconds = seconds.padStart(2, '0') || '00';
+        minutes =
+            minutes.padStart(2, '0') || '00';
+        seconds =
+            seconds.padStart(2, '0') || '00';
 
-        return hours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
+        return hours
+            ? `${hours}:${minutes}:${seconds}`
+            : `${minutes}:${seconds}`;
     };
 
     // funçao para o loading
     if (loading) {
         return (
-        <>
-            <div className='d-flex flex-column align-items-center justify-content-center m-1'> 
-                <Loading />
-            </div>
-        </>
+            <>
+                <ContainerLoading className="container-loading">
+                    <Loading
+                        $speedborder="0.7"
+                        $fontsize="8"
+                        $size="1"
+                    />
+                </ContainerLoading>
+            </>
         );
-    };
+    }
 
     if (error) {
         return (
             <>
-                <div className="d-flex flex-column align-items-center justify-content-center m-1">
+                <ContainerError className="container-error">
                     <ErrorCompoment
                         errmessage={error}
                     />
-                </div>
+                </ContainerError>
             </>
         );
-    };
+    }
 
     return (
         <>
-            <StyleMain className="main-container">
+            <StyleMain className="style-main">
                 <LeftCol className="leftCol">
                     {currentVideo && (
                         <>
-                            <ContainerVideo className="container-video">
-                                <IframeVideo
-                                    src={`https://www.youtube.com/embed/${currentVideo.id}`}
-                                    title={
-                                        currentVideo
-                                            .snippet
-                                            ?.title ||
-                                        'YouTube video player'
-                                    }
-                                    $frameBorder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                    className="iframe-video"
-                                ></IframeVideo>
-                            </ContainerVideo>
-
-                            <ContainerDescriptionVideo className="container-description-video">
-                                <TitleVideo className="title-video">
-                                    {
-                                        currentVideo
-                                            .snippet
-                                            ?.title
-                                    }
-                                </TitleVideo>
-
-                                <TitleVideo className="subtitle-video">
-                                    {currentVideo.snippet?.description?.slice(
-                                        0,
-                                        110
-                                    )}
-                                    ...
-                                </TitleVideo>
-
-                                <ContianerIcons className="contianer-icons">
-                                    <IconSpan>
-                                        {' '}
-                                        <FcLike size="20" />{' '}
-                                        {currentVideo
-                                            .statistics
-                                            ?.likeCount ||
-                                            0}
-                                    </IconSpan>
-                                    <IconSpan>
-                                        <FcBinoculars size="20" />{' '}
-                                        {currentVideo
-                                            .statistics
-                                            ?.viewCount ||
-                                            0}
-                                    </IconSpan>
-                                    <IconSpan>
-                                        <FcComments size="20" />
-                                        {currentVideo
-                                            .statistics
-                                            ?.commentCount ||
-                                            0}
-                                    </IconSpan>
-                                    <IconSpan
-                                        title="share video"
-                                        style={{
-                                            margin: '0 8px',
-                                            cursor: 'pointer'
-                                        }}
-                                        onClick={() =>
-                                            handleShareVideo(
-                                                currentVideo.id
-                                            )
-                                        }
-                                    >
-                                        <FcShare size='20'/>
-                                    </IconSpan>
-                                </ContianerIcons>
-                            </ContainerDescriptionVideo>
+                            <VideoDetails
+                                video={
+                                    currentVideo
+                                }
+                                onShareVideo={
+                                    handleShareVideo
+                                }
+                            />
                         </>
                     )}
                 </LeftCol>
 
                 <RightCol className="rightCol">
                     <WatchLaterTitle className="watch-later-title">
-                        Watch Later
+                        {searchQuery || lastSearchTerm
+                            ? `Search results for: ${searchQuery || lastSearchTerm}`
+                            : 'Watch Later'}
                     </WatchLaterTitle>
 
                     {watchLaterVideos.map(
@@ -456,67 +639,16 @@ const Main = () => {
                                     ?.videoId ||
                                 video.id;
                             return (
-                                <WatchLaterListContainer
-                                    className="watch-later-list-container"
+                                <VideoList
                                     key={videoId}
-                                    onClick={() =>
-                                        handleSelectVideo(
-                                            videoId
-                                        )
+                                    video={video}
+                                    onVideoSelect={
+                                        handleSelectVideo
                                     }
-                                >
-                                    <WatchLaterThumb
-                                        className="watch-later-thumb"
-                                        src={
-                                            video
-                                                .snippet
-                                                ?.thumbnails
-                                                ?.default
-                                                ?.url
-                                        }
-                                        onError={e => {
-                                            e.target.onerror =
-                                                null;
-                                            e.target.src =
-                                                'https://via.placeholder.com/120x90?text=No+Image';
-                                        }}
-                                        alt={
-                                            video
-                                                .snippet
-                                                ?.title ||
-                                            'Video thumbnail'
-                                        }
-                                    />
-                                    <ListVideoContainer className="list-video-container">
-                                        <VideoTitle className="video-title">
-                                            {video.snippet?.title?.slice(
-                                                0,
-                                                100
-                                            )}
-                                            {video
-                                                .snippet
-                                                ?.title
-                                                ?.length >
-                                            100
-                                                ? '...'
-                                                : ''}
-                                        </VideoTitle>
-                                        <VideoSubtitle className="video-subtitle">
-                                            {
-                                                video
-                                                    .snippet
-                                                    ?.channelTitle
-                                            }
-                                        </VideoSubtitle>
-                                        <VideoDuration className="video-duration">
-                                            {formatDuration(
-                                                video
-                                                    .contentDetails
-                                                    ?.duration
-                                            )}
-                                        </VideoDuration>
-                                    </ListVideoContainer>
-                                </WatchLaterListContainer>
+                                    formatDuration={
+                                        formatDuration
+                                    }
+                                />
                             );
                         }
                     )}

@@ -24,6 +24,8 @@ const TextFooter = styled.span`
     font-size: 1.2rem;
     color: var(--primary-color);
     font-weight: 500;
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
 `;
 
 const Footer = ({ name }) => {

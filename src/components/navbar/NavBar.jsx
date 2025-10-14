@@ -7,27 +7,41 @@ import Navbar from 'react-bootstrap/Navbar';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import logo from '../../images/logo.png';
 import styled from 'styled-components';
-import { AiOutlineHome } from 'react-icons/ai';
-import { GrLogin } from 'react-icons/gr';
-import { IoMdPerson } from 'react-icons/io';
-
-
+import { IoMdLogOut } from 'react-icons/io';
 
 const ImgStyle = styled.img`
     width: 130px;
     height: auto;
 `;
 
-function OffcanvasExample({onsearch}) {
+function OffcanvasExample({
+    onSearch,
+    user,
+    onLogout,
+    onClearHistory
+}) {
+    const [searchTerm, setSearchTerm] =
+        useState('');
 
-    const [searchTerm, setSearchTerm] = useState('');
-
-    const handleSubmit = (e) =>{
+    const handleSubmit = e => {
         e.preventDefault();
-        if (onsearch && searchTerm.trim()) {
-            onsearch(searchTerm);
+        if (onSearch && searchTerm.trim()) {
+            onSearch(searchTerm);
         }
-    }
+    };
+
+    // Adicione esta função que estava faltando
+    const handleClearAndReset = e => {
+        e.preventDefault();
+        setSearchTerm('');
+        if (onClearHistory) {
+            onClearHistory();
+        }
+        // IMPORTANTE: Após limpar o localStorage, faz refresh para voltar ao início
+        window.location.reload();
+    };
+
+
     return (
         <>
             {['xl'].map(expand => (
@@ -51,6 +65,13 @@ function OffcanvasExample({onsearch}) {
                         <Navbar.Brand
                             href="#"
                             className="ms-5"
+                            onClick={
+                                handleClearAndReset
+                            }
+                            title="Click to clear search history"
+                            style={{
+                                cursor: 'pointer'
+                            }}
                         >
                             <ImgStyle
                                 src={logo}
@@ -88,77 +109,79 @@ function OffcanvasExample({onsearch}) {
                             ></Offcanvas.Header>
 
                             <Offcanvas.Body>
-                                <Form className="form-style d-flex justify-content-end flex-grow-1"
-                                onSubmit={handleSubmit}>
+                                <Form
+                                    className="form-style d-flex justify-content-end flex-grow-1"
+                                    onSubmit={
+                                        handleSubmit
+                                    }
+                                >
                                     <Form.Control
                                         type="search"
                                         placeholder="Search for video..."
                                         className="form-search me-2"
                                         aria-label="Search"
-                                        value={searchTerm}
-                                        onChange={e => setSearchTerm(e.target.value)}
+                                        value={
+                                            searchTerm
+                                        }
+                                        onChange={e =>
+                                            setSearchTerm(
+                                                e
+                                                    .target
+                                                    .value
+                                            )
+                                        }
                                     />
                                     <Button
                                         className="search-btn-style"
                                         variant="outline-light"
-                                        type='submit'
+                                        type="submit"
                                     >
                                         Search
                                     </Button>
                                 </Form>
-                                <Nav className="justify-content-start flex-grow-1">
-                                    <Nav.Link
-                                        href="#action1"
-                                        className={({
-                                            isActive
-                                        }) =>
-                                            isActive
-                                                ? 'nav-link active'
-                                                : 'nav-link'
-                                        }
-                                    >
-                                        <AiOutlineHome
-                                            style={{
-                                                fontSize:
-                                                    '1.8rem'
-                                            }}
-                                        />
-                                    </Nav.Link>
-                                    <Nav.Link
-                                        href="#action2"
-                                        className={({
-                                            isActive
-                                        }) =>
-                                            isActive
-                                                ? 'nav-link active'
-                                                : 'nav-link'
-                                        }
-                                    >
-                                        <GrLogin
-                                            style={{
-                                                fontSize:
-                                                    '1.7rem'
-                                            }}
-                                        />
-                                    </Nav.Link>
-                                    <Nav.Link
-                                        href="#action2"
-                                        className={({
-                                            isActive
-                                        }) =>
-                                            isActive
-                                                ? 'nav-link active'
-                                                : 'nav-link'
-                                        }
-                                    >
-                                        <IoMdPerson
-                                            style={{
-                                                fontSize:
-                                                    '1.7rem'
-                                            }}
-                                        />
-                                    </Nav.Link>
-                                </Nav>
+
+                                {user && (
+                                    <Nav className="justify-content-start flex-grow-1">
+                                        <div className="d-flex align-items-center">
+                                            <img
+                                                src={
+                                                    user.picture
+                                                }
+                                                alt={
+                                                    user.name
+                                                }
+                                                style={{
+                                                    width: '32px',
+                                                    height: '32px',
+                                                    borderRadius:
+                                                        '50%',
+                                                    marginRight:
+                                                        '5px'
+                                                }}
+                                            />
+                                            <span
+                                                style={{
+                                                    color: 'white',
+                                                    marginRight:
+                                                        '15px'
+                                                }}
+                                            >
+                                                {
+                                                    user.name
+                                                }
+                                            </span>
+                                            <Button
+                                                variant="danger"
+                                                size="sm"
+                                                onClick={
+                                                    onLogout
+                                                }
+                                            >
+                                                <IoMdLogOut size="28" />
+                                            </Button>
+                                        </div>
+                                    </Nav>
+                                )}
                             </Offcanvas.Body>
                         </Navbar.Offcanvas>
                     </Container>
