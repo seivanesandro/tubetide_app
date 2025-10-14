@@ -161,7 +161,10 @@ const Login = ({ onLogin }) => {
                         shape="pill"
                         logo_alignment="left" // left, center
                         width="300px"
-                        styled={{backgroundColor: 'var(--primary-color)'}}
+                        styled={{
+                            backgroundColor:
+                                'var(--primary-color)'
+                        }}
                     />
 
                     <Footer className="login-footer">

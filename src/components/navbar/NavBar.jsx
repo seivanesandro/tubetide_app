@@ -41,7 +41,6 @@ function OffcanvasExample({
         window.location.reload();
     };
 
-
     return (
         <>
             {['xl'].map(expand => (

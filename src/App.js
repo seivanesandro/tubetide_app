@@ -41,16 +41,27 @@ const AppContent = () => {
 
         // Redefine a consulta atual
         setSearchQuery('');
-        
+
         // IMPORTANTE: Marca que o usuário clicou no brand para reiniciar a aplicação
-        sessionStorage.setItem('brandClicked', 'true');
-        
+        sessionStorage.setItem(
+            'brandClicked',
+            'true'
+        );
+
         // Limpa os dados salvos para garantir que os vídeos populares serão carregados
-        localStorage.removeItem('currentVideoDetails');
-        localStorage.removeItem('watchLaterVideos');
-        localStorage.removeItem('lastSearchQuery');
-        
-        console.log("Reiniciando aplicação: clique no brand detectado");
+        localStorage.removeItem(
+            'currentVideoDetails'
+        );
+        localStorage.removeItem(
+            'watchLaterVideos'
+        );
+        localStorage.removeItem(
+            'lastSearchQuery'
+        );
+
+        console.log(
+            'Reiniciando aplicação: clique no brand detectado'
+        );
     };
 
     const handleLogin = userData => {

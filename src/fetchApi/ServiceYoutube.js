@@ -13,7 +13,7 @@ export const searchVideos = async (
                     part: 'snippet',
                     maxResults: maxResults,
                     q: searchTerm,
-                    type: 'video' // Para garantir que só retorne vídeos, não playlists ou canais
+                    type: 'video' // FIXME Para garantir que só retorne vídeos, não playlists ou canais
                 }
             }
         );

@@ -5,7 +5,9 @@ import React, {
 // import PropTypes from 'prop-types'
 //import Youtube from '../fetchApi/Youtube';
 
-import styled, { keyframes } from 'styled-components';
+import styled, {
+    keyframes
+} from 'styled-components';
 import { devices } from '../utils/constantes';
 import {
     getVideoDetails,
@@ -69,7 +71,6 @@ const ContainerError = styled.div`
         margin: 5rem 1rem;
     }
 `;
-
 
 const StyleMain = styled.div`
     background: var(--bg-color);
@@ -173,82 +174,162 @@ const Main = ({ searchQuery }) => {
 
     // IMPLEMENTAÇÃO NOVA: Função simplificada para garantir persistência após refresh
     useEffect(() => {
-        const loadStateAfterRefresh = async () => {
-            try {
-                setLoading(true);
-                console.log("Iniciando carregamento de estado após refresh");
-                
-                // 1. Tentar carregar o vídeo salvo
-                const savedVideoJSON = localStorage.getItem('currentVideoDetails');
-                let videoLoaded = false;
-                
-                if (savedVideoJSON) {
-                    try {
-                        const savedVideo = JSON.parse(savedVideoJSON);
-                        setCurrentVideo(savedVideo);
-                        videoLoaded = true;
-                        console.log("Vídeo carregado do localStorage:", savedVideo.id);
-                    } catch (e) {
-                        console.error("Erro ao carregar vídeo:", e);
-                    }
-                }
-                
-                // 2. Tentar carregar a lista de vídeos salva
-                const savedVideosJSON = localStorage.getItem('watchLaterVideos');
-                let videosLoaded = false;
-                
-                if (savedVideosJSON) {
-                    try {
-                        const savedVideos = JSON.parse(savedVideosJSON);
-                        if (savedVideos && savedVideos.length > 0) {
-                            setWatchLaterVideos(savedVideos);
-                            videosLoaded = true;
-                            console.log("Lista de vídeos carregada com sucesso:", savedVideos.length);
-                        }
-                    } catch (e) {
-                        console.error("Erro ao carregar lista de vídeos:", e);
-                    }
-                }
-                
-                // 3. Tentar carregar o termo de pesquisa
-                const savedSearch = localStorage.getItem('lastSearchQuery');
-                if (savedSearch) {
-                    setLastSearchTerm(savedSearch);
-                    console.log("Termo de pesquisa carregado:", savedSearch);
-                }
-                
-                // 4. Se não foi possível carregar do localStorage, carrega vídeos populares (somente primeira visita)
-                if (!videosLoaded) {
-                    console.log("Carregando vídeos populares (primeira visita)");
-                    const videos = await getPopularVideos(15);
-                    setWatchLaterVideos(videos);
-                    localStorage.setItem('watchLaterVideos', JSON.stringify(videos));
-                    
-                    // Se não carregou vídeo, usar o primeiro dos populares
-                    if (!videoLoaded && videos && videos.length > 0) {
+        const loadStateAfterRefresh =
+            async () => {
+                try {
+                    setLoading(true);
+                    console.log(
+                        'Iniciando carregamento de estado após refresh'
+                    );
+
+                    // 1. Tentar carregar o vídeo salvo
+                    const savedVideoJSON =
+                        localStorage.getItem(
+                            'currentVideoDetails'
+                        );
+                    let videoLoaded = false;
+
+                    if (savedVideoJSON) {
                         try {
-                            const firstVideoId = getVideoIdFromResult(videos[0]);
-                            if (firstVideoId) {
-                                const videoDetails = await getVideoDetails(firstVideoId);
-                                setCurrentVideo(videoDetails);
-                                localStorage.setItem('currentVideoDetails', JSON.stringify(videoDetails));
+                            const savedVideo =
+                                JSON.parse(
+                                    savedVideoJSON
+                                );
+                            setCurrentVideo(
+                                savedVideo
+                            );
+                            videoLoaded = true;
+                            console.log(
+                                'Vídeo carregado do localStorage:',
+                                savedVideo.id
+                            );
+                        } catch (e) {
+                            console.error(
+                                'Erro ao carregar vídeo:',
+                                e
+                            );
+                        }
+                    }
+
+                    // 2. Tentar carregar a lista de vídeos salva
+                    const savedVideosJSON =
+                        localStorage.getItem(
+                            'watchLaterVideos'
+                        );
+                    let videosLoaded = false;
+
+                    if (savedVideosJSON) {
+                        try {
+                            const savedVideos =
+                                JSON.parse(
+                                    savedVideosJSON
+                                );
+                            if (
+                                savedVideos &&
+                                savedVideos.length >
+                                    0
+                            ) {
+                                setWatchLaterVideos(
+                                    savedVideos
+                                );
+                                videosLoaded = true;
+                                console.log(
+                                    'Lista de vídeos carregada com sucesso:',
+                                    savedVideos.length
+                                );
                             }
                         } catch (e) {
-                            console.error("Erro ao carregar primeiro vídeo:", e);
+                            console.error(
+                                'Erro ao carregar lista de vídeos:',
+                                e
+                            );
                         }
                     }
+
+                    // 3. Tentar carregar o termo de pesquisa
+                    const savedSearch =
+                        localStorage.getItem(
+                            'lastSearchQuery'
+                        );
+                    if (savedSearch) {
+                        setLastSearchTerm(
+                            savedSearch
+                        );
+                        console.log(
+                            'Termo de pesquisa carregado:',
+                            savedSearch
+                        );
+                    }
+
+                    // 4. Se não foi possível carregar do localStorage, carrega vídeos populares (somente primeira visita)
+                    if (!videosLoaded) {
+                        console.log(
+                            'Carregando vídeos populares (primeira visita)'
+                        );
+                        const videos =
+                            await getPopularVideos(
+                                15
+                            );
+                        setWatchLaterVideos(
+                            videos
+                        );
+                        localStorage.setItem(
+                            'watchLaterVideos',
+                            JSON.stringify(videos)
+                        );
+
+                        // Se não carregou vídeo, usar o primeiro dos populares
+                        if (
+                            !videoLoaded &&
+                            videos &&
+                            videos.length > 0
+                        ) {
+                            try {
+                                const firstVideoId =
+                                    getVideoIdFromResult(
+                                        videos[0]
+                                    );
+                                if (
+                                    firstVideoId
+                                ) {
+                                    const videoDetails =
+                                        await getVideoDetails(
+                                            firstVideoId
+                                        );
+                                    setCurrentVideo(
+                                        videoDetails
+                                    );
+                                    localStorage.setItem(
+                                        'currentVideoDetails',
+                                        JSON.stringify(
+                                            videoDetails
+                                        )
+                                    );
+                                }
+                            } catch (e) {
+                                console.error(
+                                    'Erro ao carregar primeiro vídeo:',
+                                    e
+                                );
+                            }
+                        }
+                    }
+
+                    setLoading(false);
+                } catch (error) {
+                    console.error(
+                        'Erro ao carregar estado:',
+                        error
+                    );
+                    setError(
+                        'Falha ao carregar dados. Por favor, tente novamente mais tarde.'
+                    );
+                    setLoading(false);
                 }
-                
-                setLoading(false);
-            } catch (error) {
-                console.error("Erro ao carregar estado:", error);
-                setError("Falha ao carregar dados. Por favor, tente novamente mais tarde.");
-                setLoading(false);
-            }
-        };
-        
+            };
+
         loadStateAfterRefresh();
-        
+
         // Este efeito só deve executar uma vez ao montar o componente
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -258,17 +339,23 @@ const Main = ({ searchQuery }) => {
         const handleSearch = async () => {
             // CORREÇÃO CRÍTICA: Só executa se houver searchQuery OU se brandClicked for true
             // Isso evita executar no refresh normal da página
-            const brandClicked = sessionStorage.getItem('brandClicked') === 'true';
-            
+            const brandClicked =
+                sessionStorage.getItem(
+                    'brandClicked'
+                ) === 'true';
+
             // Se não há searchQuery E não clicou no brand, NÃO FAZ NADA (mantém localStorage)
             if (!searchQuery && !brandClicked) {
-                console.log("Sem ação necessária - mantendo estado atual");
+                console.log(
+                    'Sem ação necessária - mantendo estado atual'
+                );
                 return;
             }
-            
+
             if (
                 !searchQuery ||
-                (searchQuery.trim() === '' && brandClicked)
+                (searchQuery.trim() === '' &&
+                    brandClicked)
             ) {
                 try {
                     setLoading(true);
@@ -281,7 +368,7 @@ const Main = ({ searchQuery }) => {
                     localStorage.removeItem(
                         'currentVideoId'
                     );
-                    
+
                     // NOVA ALTERAÇÃO: Limpar a pesquisa salva quando clica no brand
                     localStorage.removeItem(
                         'lastSearchQuery'
@@ -294,18 +381,34 @@ const Main = ({ searchQuery }) => {
                             15
                         );
                     setWatchLaterVideos(videos);
-                    
+
                     //  Salvar os vídeos populares no localStorage para persistir após refresh
-                    localStorage.setItem('watchLaterVideos', JSON.stringify(videos));
+                    localStorage.setItem(
+                        'watchLaterVideos',
+                        JSON.stringify(videos)
+                    );
 
                     // IMPORTANTE: Sempre carregar o primeiro vídeo após clicar no brand
                     if (videos.length > 0) {
-                        const videoDetails = await getVideoDetails(videos[0].id);
-                        setCurrentVideo(videoDetails);
-                        
+                        const videoDetails =
+                            await getVideoDetails(
+                                videos[0].id
+                            );
+                        setCurrentVideo(
+                            videoDetails
+                        );
+
                         // Salvar o novo estado no localStorage
-                        localStorage.setItem('currentVideoDetails', JSON.stringify(videoDetails));
-                        localStorage.setItem('currentVideoId', videoDetails.id);
+                        localStorage.setItem(
+                            'currentVideoDetails',
+                            JSON.stringify(
+                                videoDetails
+                            )
+                        );
+                        localStorage.setItem(
+                            'currentVideoId',
+                            videoDetails.id
+                        );
                     }
 
                     setLoading(false);
@@ -320,17 +423,28 @@ const Main = ({ searchQuery }) => {
             }
 
             // NOVA ALTERAÇÃO: Salvar a pesquisa atual no localStorage
-            if (searchQuery && searchQuery.trim() !== '') {
-                localStorage.setItem('lastSearchQuery', searchQuery);
+            if (
+                searchQuery &&
+                searchQuery.trim() !== ''
+            ) {
+                localStorage.setItem(
+                    'lastSearchQuery',
+                    searchQuery
+                );
                 setLastSearchTerm(searchQuery);
             } else {
                 // Se não tiver query nova, usar a salva (para manter persistência)
-                const savedSearch = localStorage.getItem('lastSearchQuery');
+                const savedSearch =
+                    localStorage.getItem(
+                        'lastSearchQuery'
+                    );
                 if (savedSearch) {
-                    setLastSearchTerm(savedSearch);
+                    setLastSearchTerm(
+                        savedSearch
+                    );
                 }
             }
-            
+
             // Código para pesquisa
             try {
                 setLoading(true);
@@ -357,9 +471,14 @@ const Main = ({ searchQuery }) => {
                     setWatchLaterVideos(
                         searchResults
                     );
-                    
+
                     // SOLUÇÃO: Salvar os resultados de pesquisa no localStorage para persistir após refresh
-                    localStorage.setItem('watchLaterVideos', JSON.stringify(searchResults));
+                    localStorage.setItem(
+                        'watchLaterVideos',
+                        JSON.stringify(
+                            searchResults
+                        )
+                    );
 
                     // Corrigindo a extração do ID do vídeo
                     const firstVideoId =
@@ -385,7 +504,9 @@ const Main = ({ searchQuery }) => {
                             );
                             localStorage.setItem(
                                 'currentVideoDetails',
-                                JSON.stringify(videoDetails)
+                                JSON.stringify(
+                                    videoDetails
+                                )
                             );
                         } catch (detailsError) {
                             console.error(
@@ -478,23 +599,38 @@ const Main = ({ searchQuery }) => {
             setLoading(true);
 
             // Salvar o ID do vídeo selecionado no localStorage
-            localStorage.setItem('currentVideoId', videoId);
+            localStorage.setItem(
+                'currentVideoId',
+                videoId
+            );
 
-            const videoDetails = await getVideoDetails(videoId);
+            const videoDetails =
+                await getVideoDetails(videoId);
             setCurrentVideo(videoDetails);
-            
+
             // IMPORTANTE: Salvar também o vídeo atual completo no localStorage
             // para garantir que ele persista exatamente igual após o refresh
             try {
-                localStorage.setItem('currentVideoDetails', JSON.stringify(videoDetails));
-                
+                localStorage.setItem(
+                    'currentVideoDetails',
+                    JSON.stringify(videoDetails)
+                );
+
                 // MUITO IMPORTANTE: Salvar também a lista de vídeos atual
                 // para garantir que ela persista exatamente igual após o refresh
-                localStorage.setItem('watchLaterVideos', JSON.stringify(watchLaterVideos));
+                localStorage.setItem(
+                    'watchLaterVideos',
+                    JSON.stringify(
+                        watchLaterVideos
+                    )
+                );
             } catch (err) {
-                console.error('Erro ao salvar estado:', err);
+                console.error(
+                    'Erro ao salvar estado:',
+                    err
+                );
             }
-            
+
             setLoading(false);
         } catch (error) {
             console.log(
@@ -627,7 +763,8 @@ const Main = ({ searchQuery }) => {
 
                 <RightCol className="rightCol">
                     <WatchLaterTitle className="watch-later-title">
-                        {searchQuery || lastSearchTerm
+                        {searchQuery ||
+                        lastSearchTerm
                             ? `Search results for: ${searchQuery || lastSearchTerm}`
                             : 'Watch Later'}
                     </WatchLaterTitle>

@@ -1,5 +1,5 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React from 'react';
+import PropTypes from 'prop-types';
 import styled, {
     keyframes
 } from 'styled-components';
@@ -58,17 +58,13 @@ const VideoDuration = styled.div`
     text-align: left;
 `;
 
-
-
-
 const VideoList = ({
     video,
     onVideoSelect,
     formatDuration
 }) => {
-
     const videoId = video.id?.videoId || video.id;
-    
+
     return (
         <>
             <WatchLaterListContainer
@@ -133,4 +129,4 @@ VideoList.propTypes = {
     formatDuration: PropTypes.func.isRequired
 };
 
-export default VideoList
+export default VideoList;

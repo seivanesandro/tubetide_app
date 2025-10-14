@@ -1,8 +1,15 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import styled, { keyframes } from 'styled-components'
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled, {
+    keyframes
+} from 'styled-components';
 import { devices } from '../../utils/constantes';
-import { FcBinoculars, FcComments, FcLike, FcShare } from 'react-icons/fc';
+import {
+    FcBinoculars,
+    FcComments,
+    FcLike,
+    FcShare
+} from 'react-icons/fc';
 
 const ScaleAnimation = keyframes`
     from {
@@ -188,7 +195,7 @@ const VideoDetails = ({
                             cursor: 'pointer'
                         }}
                         onClick={() =>
-                                onShareVideo(video.id)
+                            onShareVideo(video.id)
                         }
                     >
                         <FcShare size="20" />
@@ -205,4 +212,4 @@ VideoDetails.propTypes = {
     onShareVideo: PropTypes.func
 };
 
-export default VideoDetails
+export default VideoDetails;
