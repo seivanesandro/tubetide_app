@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/tubetide_app/static/css/main.bf36f866.css",
+    "main.js": "/tubetide_app/static/js/main.13875b5b.js",
+    "static/js/453.613566ba.chunk.js": "/tubetide_app/static/js/453.613566ba.chunk.js",
+    "static/media/logo.png": "/tubetide_app/static/media/logo.08fdd59d539e931cb16d.png",
+    "index.html": "/tubetide_app/index.html",
+    "main.bf36f866.css.map": "/tubetide_app/static/css/main.bf36f866.css.map",
+    "main.13875b5b.js.map": "/tubetide_app/static/js/main.13875b5b.js.map",
+    "453.613566ba.chunk.js.map": "/tubetide_app/static/js/453.613566ba.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.bf36f866.css",
+    "static/js/main.13875b5b.js"
+  ]
+}
