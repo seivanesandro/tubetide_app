@@ -192,7 +192,7 @@ const VideoDetails = ({
                         }
                     >
                         <FcShare size="20" />
-                        Share Video
+                        Share
                     </IconSpan>
                 </ContianerIcons>
             </ContainerDescriptionVideo>
