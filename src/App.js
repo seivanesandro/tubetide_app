@@ -42,7 +42,7 @@ const AppContent = () => {
         // Redefine a consulta atual
         setSearchQuery('');
 
-        // IMPORTANTE: Marca que o usuário clicou no brand para reiniciar a aplicação
+        // Marca que o usuário clicou no brand para reiniciar a aplicação
         sessionStorage.setItem(
             'brandClicked',
             'true'
@@ -57,10 +57,6 @@ const AppContent = () => {
         );
         localStorage.removeItem(
             'lastSearchQuery'
-        );
-
-        console.log(
-            'Reiniciando aplicação: clique no brand detectado'
         );
     };
 

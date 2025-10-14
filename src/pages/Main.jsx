@@ -172,17 +172,13 @@ const Main = ({ searchQuery }) => {
     const [lastSearchTerm, setLastSearchTerm] =
         useState('');
 
-    // IMPLEMENTAÇÃO NOVA: Função simplificada para garantir persistência após refresh
+    // Função simplificada para garantir persistência após refresh
     useEffect(() => {
         const loadStateAfterRefresh =
             async () => {
                 try {
                     setLoading(true);
-                    console.log(
-                        'Iniciando carregamento de estado após refresh'
-                    );
-
-                    // 1. Tentar carregar o vídeo salvo
+                    
                     const savedVideoJSON =
                         localStorage.getItem(
                             'currentVideoDetails'
@@ -199,10 +195,6 @@ const Main = ({ searchQuery }) => {
                                 savedVideo
                             );
                             videoLoaded = true;
-                            console.log(
-                                'Vídeo carregado do localStorage:',
-                                savedVideo.id
-                            );
                         } catch (e) {
                             console.error(
                                 'Erro ao carregar vídeo:',
@@ -233,10 +225,6 @@ const Main = ({ searchQuery }) => {
                                     savedVideos
                                 );
                                 videosLoaded = true;
-                                console.log(
-                                    'Lista de vídeos carregada com sucesso:',
-                                    savedVideos.length
-                                );
                             }
                         } catch (e) {
                             console.error(
@@ -255,17 +243,10 @@ const Main = ({ searchQuery }) => {
                         setLastSearchTerm(
                             savedSearch
                         );
-                        console.log(
-                            'Termo de pesquisa carregado:',
-                            savedSearch
-                        );
                     }
 
                     // 4. Se não foi possível carregar do localStorage, carrega vídeos populares (somente primeira visita)
                     if (!videosLoaded) {
-                        console.log(
-                            'Carregando vídeos populares (primeira visita)'
-                        );
                         const videos =
                             await getPopularVideos(
                                 15
@@ -346,9 +327,6 @@ const Main = ({ searchQuery }) => {
 
             // Se não há searchQuery E não clicou no brand, NÃO FAZ NADA (mantém localStorage)
             if (!searchQuery && !brandClicked) {
-                console.log(
-                    'Sem ação necessária - mantendo estado atual'
-                );
                 return;
             }
 
@@ -448,20 +426,11 @@ const Main = ({ searchQuery }) => {
             // Código para pesquisa
             try {
                 setLoading(true);
-                console.log(
-                    'Searching for:',
-                    searchQuery
-                );
-
                 // Buscar vídeos relacionados à pesquisa
                 const searchResults =
                     await searchVideos(
                         searchQuery
                     );
-                console.log(
-                    'Search results:',
-                    searchResults
-                );
 
                 if (
                     searchResults &&
@@ -552,10 +521,6 @@ const Main = ({ searchQuery }) => {
             videoResult.id &&
             videoResult.id.videoId
         ) {
-            console.log(
-                'Found videoId in id.videoId:',
-                videoResult.id.videoId
-            );
             return videoResult.id.videoId;
         }
 
@@ -564,10 +529,6 @@ const Main = ({ searchQuery }) => {
             videoResult.id &&
             typeof videoResult.id === 'string'
         ) {
-            console.log(
-                'Found direct id:',
-                videoResult.id
-            );
             return videoResult.id;
         }
 
@@ -577,19 +538,9 @@ const Main = ({ searchQuery }) => {
             videoResult.snippet.resourceId &&
             videoResult.snippet.resourceId.videoId
         ) {
-            console.log(
-                'Found videoId in snippet.resourceId:',
-                videoResult.snippet.resourceId
-                    .videoId
-            );
             return videoResult.snippet.resourceId
                 .videoId;
         }
-
-        console.error(
-            'Could not extract video ID from:',
-            videoResult
-        );
         return null;
     };
 

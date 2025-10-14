@@ -108,10 +108,6 @@ const Login = ({ onLogin }) => {
             const userObject = jwtDecode(
                 credentialResponse.credential
             );
-            console.log(
-                'Google user data:',
-                userObject
-            );
 
             // Extrair informações relevantes do token decodificado
             const userData = {
