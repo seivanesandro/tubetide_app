@@ -52,7 +52,7 @@ export const searchVideos = async (
         return [];
     } catch (error) {
         console.error(
-            'Error searching videos:',
+            'Error on searching videos:',
             error
         );
         throw error;
@@ -74,7 +74,7 @@ export const getVideoDetails = async videoId => {
         return response.data.items[0];
     } catch (error) {
         console.error(
-            'Error fetching video details:',
+            'Error about video details:',
             error
         );
         throw error;
@@ -99,7 +99,7 @@ export const getPopularVideos = async (
         return response.data.items;
     } catch (error) {
         console.error(
-            'Error fetching popular videos:',
+            'Error about popular videos:',
             error
         );
         throw error;

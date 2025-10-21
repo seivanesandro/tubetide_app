@@ -82,7 +82,7 @@ const AppContent = () => {
                 setUser(JSON.parse(savedUser));
             } catch (error) {
                 console.error(
-                    'Error parsing saved user data:',
+                    'Error:',
                     error
                 );
             }
