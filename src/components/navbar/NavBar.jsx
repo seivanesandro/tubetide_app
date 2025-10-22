@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import {
+    Link,
+    useLocation,
+    useNavigate
+} from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -8,6 +13,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import logo from '../../images/logo.png';
 import styled from 'styled-components';
 import { IoMdLogOut } from 'react-icons/io';
+import { IoHomeSharp } from 'react-icons/io5';
 
 const ImgStyle = styled.img`
     width: 130px;
@@ -15,18 +21,49 @@ const ImgStyle = styled.img`
 `;
 
 function OffcanvasExample({
-    onSearch,
     user,
     onLogout,
     onClearHistory
 }) {
     const [searchTerm, setSearchTerm] =
         useState('');
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const handleSubmit = e => {
         e.preventDefault();
-        if (onSearch && searchTerm.trim()) {
-            onSearch(searchTerm);
+        // Navegação simples sem busca global
+        if (searchTerm.trim()) {
+            if (location.pathname === '/') {
+                // Se estamos na Main, procurar vídeos no Main
+                const mainElement =
+                    document.querySelector(
+                        '[data-main-search]'
+                    );
+                if (mainElement) {
+                    const event = new CustomEvent(
+                        'mainSearch',
+                        { detail: searchTerm }
+                    );
+                    window.dispatchEvent(event);
+                }
+            } else if (
+                location.pathname ===
+                '/most-viewed'
+            ) {
+                // Se estamos na MostViewedPage, procurar lá
+                const mvElement =
+                    document.querySelector(
+                        '[data-mv-search]'
+                    );
+                if (mvElement) {
+                    const event = new CustomEvent(
+                        'mvSearch',
+                        { detail: searchTerm }
+                    );
+                    window.dispatchEvent(event);
+                }
+            }
         }
     };
 
@@ -37,7 +74,9 @@ function OffcanvasExample({
         if (onClearHistory) {
             onClearHistory();
         }
-        // IMPORTANTE: Após limpar o localStorage, faz refresh para voltar ao início
+        // Forçar remontagem do componente atual navegando para mesma rota
+        const currentPath = location.pathname;
+        navigate(currentPath, { replace: true });
         window.location.reload();
     };
 
@@ -138,6 +177,21 @@ function OffcanvasExample({
                                         Search
                                     </Button>
                                 </Form>
+                                <Nav className="navbar-nav mb-3 mx-5 align-items-end">
+                                    <Nav.Link
+                                        as={Link}
+                                        to="/"
+                                    >
+                                        <IoHomeSharp size={30}/>
+                                    </Nav.Link>
+                                    <Nav.Link
+                                        as={Link}
+                                        to="/most-viewed"
+                                    >
+                                        Most
+                                        Viewed
+                                    </Nav.Link>
+                                </Nav>
 
                                 {user && (
                                     <Nav className="justify-content-start flex-grow-1">

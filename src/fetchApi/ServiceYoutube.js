@@ -3,7 +3,7 @@ import Youtube from './Youtube';
 // Buscar vídeos com base em uma consulta
 export const searchVideos = async (
     searchTerm,
-    maxResults = 10
+    maxResults = 15
 ) => {
     try {
         const response = await Youtube.get(
@@ -13,7 +13,7 @@ export const searchVideos = async (
                     part: 'snippet',
                     maxResults: maxResults,
                     q: searchTerm,
-                    type: 'video' // FIXME: Para garantir que só retorne vídeos, não playlists ou canais
+                    type: 'video'
                 }
             }
         );

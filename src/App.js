@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
+import {
+    BrowserRouter,
+    Routes,
+    Route
+} from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import NavBar from './components/navbar/NavBar';
 import Main from './pages/Main';
+import MostViewedPage from './pages/MostViewedPage';
 import Login from './pages/Login';
 import Footer from './components/footer/Footer';
 import styled from 'styled-components';
@@ -15,32 +21,22 @@ const AppStyle = styled.div`
 // Componente interno que usa o hook useAuth
 const AppContent = () => {
     const [user, setUser] = useState(null);
-    const [searchQuery, setSearchQuery] =
-        useState('');
 
     // estado para armazenar o histórico de pesquisa
     const [searchHistory, setSearchHistory] =
         useState([]);
 
-    const handleSearch = query => {
-        setSearchQuery(query);
-
-        // Adicionar a consulta ao histórico
-        setSearchHistory(prevHistory => {
-            // Evita duplicatas no histórico
-            if (!prevHistory.includes(query)) {
-                return [...prevHistory, query];
-            }
-            return prevHistory;
-        });
-    };
-
     const handleClearHistory = () => {
         // Limpa o histórico de pesquisa
         setSearchHistory([]);
 
-        // Redefine a consulta atual
-        setSearchQuery('');
+        // Limpar cache da MostViewedPage
+        localStorage.removeItem(
+            'mostViewedVideos'
+        );
+        localStorage.removeItem(
+            'mostViewedQuery'
+        );
 
         // Marca que o usuário clicou no brand para reiniciar a aplicação
         sessionStorage.setItem(
@@ -81,10 +77,7 @@ const AppContent = () => {
             try {
                 setUser(JSON.parse(savedUser));
             } catch (error) {
-                console.error(
-                    'Error:',
-                    error
-                );
+                console.error('Error:', error);
             }
         }
     }, []);
@@ -94,28 +87,42 @@ const AppContent = () => {
     }
 
     return (
-        <AppStyle className="App">
-            <NavBar
-                onSearch={handleSearch}
-                user={user}
-                onLogout={handleLogout}
-                onClearHistory={
-                    handleClearHistory
-                }
-            />
-            <Main searchQuery={searchQuery} />
-            <ul
-                invisible="true"
-                style={{ display: 'none' }}
-            >
-                {searchHistory.map(
-                    (item, idx) => (
-                        <li key={idx}>{item}</li>
-                    )
-                )}
-            </ul>
-            <Footer name="Sandro Seivane" />
-        </AppStyle>
+        <BrowserRouter>
+            <AppStyle className="App">
+                <NavBar
+                    user={user}
+                    onLogout={handleLogout}
+                    onClearHistory={
+                        handleClearHistory
+                    }
+                />
+                <Routes>
+                    <Route
+                        path="/"
+                        element={<Main />}
+                    />
+                    <Route
+                        path="/most-viewed"
+                        element={
+                            <MostViewedPage />
+                        }
+                    />
+                </Routes>
+                <ul
+                    invisible="true"
+                    style={{ display: 'none' }}
+                >
+                    {searchHistory.map(
+                        (item, idx) => (
+                            <li key={idx}>
+                                {item}
+                            </li>
+                        )
+                    )}
+                </ul>
+                <Footer name="Sandro Seivane" />
+            </AppStyle>
+        </BrowserRouter>
     );
 };
 
