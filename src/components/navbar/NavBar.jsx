@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
     Link,
     useLocation,
-    useNavigate
+    //useNavigate
 } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
@@ -28,7 +28,7 @@ function OffcanvasExample({
     const [searchTerm, setSearchTerm] =
         useState('');
     const location = useLocation();
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -74,9 +74,7 @@ function OffcanvasExample({
         if (onClearHistory) {
             onClearHistory();
         }
-        // Forçar remontagem do componente atual navegando para mesma rota
-        const currentPath = location.pathname;
-        navigate(currentPath, { replace: true });
+        // recharge the page to reset any state
         window.location.reload();
     };
 
